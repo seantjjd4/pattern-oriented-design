@@ -1,21 +1,29 @@
-#include "iterator.h"
-#include "folder.h"
+// #include "iterator.h"
+// #include "folder.h"
 
-FolderIterator::FolderIterator(Folder* composite)
-    :_host(composite) {}
+// Folder::FolderIterator::FolderIterator(Folder* composite)
+//     :_host(composite) {
+//         _version = _host->_getVersion();
+//     }
 
-void FolderIterator::first() {
-    _current = _host->_nodes.begin();
-}
+// void Folder::FolderIterator::first() {
+//     if (_host->_getVersion() != _version) {
+//         throw ("Iterator unavailable! -> --Folder structure changed--");
+//     }
+//     _current = _host->_nodes.begin();
+// }
 
-Node * FolderIterator::currentItem() const {
-    return *_current;
-}
+// Node * Folder::FolderIterator::currentItem() const {
+//     return *_current;
+// }
 
-void FolderIterator::next() {
-    _current++;
-}
+// void Folder::FolderIterator::next() {
+//     if (_host->_getVersion() != _version) {
+//         throw ("Iterator unavailable! -> --Folder structure changed--");
+//     }
+//     _current++;
+// }
 
-bool FolderIterator::isDone() const {
-    return _current == _host->_nodes.end();
-}
+// bool Folder::FolderIterator::isDone() const {
+//     return _current == _host->_nodes.end();
+// }

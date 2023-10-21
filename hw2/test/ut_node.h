@@ -7,86 +7,82 @@
 class NodeTest: public ::testing::Test {
 protected:
     void SetUp() {
-        home = new Folder("/Users/user/home");
+        root = new Folder("./src/root");
 
-        profile = new File("/Users/user/home/my_profile");
-        home->add(profile);
+        file0_1 = new File("./src/root/file0_1.txt");
+        root->add(file0_1);
 
-        download = new Folder("/Users/user/home/Downloads");
-        home->add(download);
+        folder1_1 = new Folder("./src/root/folder1_1");
+        root->add(folder1_1);
 
-        document = new Folder("/Users/user/home/Documents");
-        home->add(document);
+        folder1_2 = new Folder("./src/root/folder1_2");
+        root->add(folder1_2);
 
-        note = new File("/Users/user/home/Documents/note.txt");
-        document->add(note);
+        file1_2 = new File("./src/root/folder1_2/file1_2.txt");
+        folder1_2->add(file1_2);
 
-        favorite = new Folder("/Users/user/home/Documents/favorites");
-        document->add(favorite);
-        ddd = new File("/Users/user/home/Documents/favorites/domain-driven-design.pdf");
-        favorite->add(ddd);
-        ca = new File("/Users/user/home/Documents/favorites/clean-architecture.pdf");
-        favorite->add(ca);
-        cqrs = new File("/Users/user/home/Documents/favorites/cqrs.pdf");
-        favorite->add(cqrs);
+        folder2_2 = new Folder("./src/root/folder1_2/folder2_2");
+        folder1_2->add(folder2_2);
+        file2_2 = new File("./src/root/folder1_2/folder2_2/file2_2.txt");
+        folder2_2->add(file2_2);
+        file2_3 = new File("./src/root/folder1_2/folder2_2/file2_3.txt");
+        folder2_2->add(file2_3);
     }
 
     void TearDown() {
-        delete home;
-        delete profile;
-        delete download;
-        delete document;
-        delete note;
-        delete favorite;
-        delete ddd;
-        delete ca;
-        delete cqrs;
+        delete root;
+        delete file0_1;
+        delete folder1_1;
+        delete folder1_2;
+        delete file1_2;
+        delete folder2_2;
+        delete file2_2;
+        delete file2_3;
     }
     
-    Node * home;
-    Node * profile;
-    Node * download;
-    Node * document;
-    Node * note;
-    Node * favorite;
-    Node * ddd;
-    Node * ca;
-    Node * cqrs;
+    Node * root;
+    Node * file0_1;
+    Node * folder1_1;
+    Node * folder1_2;
+    Node * file1_2;
+    Node * folder2_2;
+    Node * file2_2;
+    Node * file2_3;
 };
 
 
 TEST_F(NodeTest, numberOfFiles) {
-    ASSERT_EQ(5, home->numberOfFiles());
+    ASSERT_EQ(4, root->numberOfFiles());
 }
 
 TEST_F(NodeTest, find_a_file) {
-    Node * result = home->find("/Users/user/home/Documents/favorites/cqrs.pdf");
-    ASSERT_EQ(cqrs, result);
+    Node * result = root->find("./src/root/folder1_2/folder2_2/file2_3.txt");
+    ASSERT_EQ(file2_3, result);
 }
 
 TEST_F(NodeTest, find_a_file_not_exist) {
-    Node * result = home->find("/Users/user/home/Documents/favorites/helloworld.pdf");
+    Node * result = root->find("./src/root/folder1_2/folder2_2/file2_4.txt");
     ASSERT_EQ(nullptr, result);
 }
 
 TEST_F(NodeTest, find_a_folder) {
-    Node * result = document->find("/Users/user/home/Documents/favorites");
-    ASSERT_EQ(favorite, result);
+    Node * result = folder1_2->find("./src/root/folder1_2/folder2_2");
+    ASSERT_EQ(folder2_2, result);
 }
 
 TEST_F(NodeTest, find_a_folder_not_exist) {
-    Node * result = document->find("/Users/user/home/Documents/not_like");
+    Node * result = folder1_2->find("./src/root/folder1_2/folder2_3");
     ASSERT_EQ(nullptr, result);
 }
 
 TEST_F(NodeTest, delete_a_file) {
-    ASSERT_EQ(cqrs->name(), home->find("/Users/user/home/Documents/favorites/cqrs.pdf")->name());
-    home->remove("/Users/user/home/Documents/favorites/cqrs.pdf");
-    ASSERT_EQ(nullptr, home->find("/Users/user/home/Documents/favorites/cqrs.pdf"));
+    ASSERT_EQ(file2_3->name(), root->find("./src/root/folder1_2/folder2_2/file2_3.txt")->name());
+    root->remove("./src/root/folder1_2/folder2_2/file2_3.txt");
+    ASSERT_EQ(nullptr, root->find("./src/root/folder1_2/folder2_2/file2_3.txt"));
 }
 
 TEST_F(NodeTest, delete_a_folder) {
-    ASSERT_EQ(favorite->name(), home->find("/Users/user/home/Documents/favorites")->name());
-    home->remove("/Users/user/home/Documents/favorites");
-    ASSERT_EQ(nullptr, home->find("/Users/user/home/Documents/favorites"));
+    ASSERT_EQ(folder2_2->name(), root->find("./src/root/folder1_2/folder2_2")->name());
+    root->remove("./src/root/folder1_2/folder2_2");
+    ASSERT_EQ(nullptr, root->find("./src/root/folder1_2/folder2_2"));
 }

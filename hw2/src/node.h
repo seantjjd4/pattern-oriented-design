@@ -3,6 +3,7 @@
 #include<string>
 #include "iterator.h"
 #include "null_iterator.h"
+#include "visitor.h"
 
 using namespace std;
 
@@ -64,5 +65,5 @@ public:
         throw string("This node does not support deleting sub node");
     }
 
-    void accept(Visitor * visitor);
+    virtual void accept(Visitor * visitor) = 0;
 };

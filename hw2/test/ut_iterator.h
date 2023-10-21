@@ -9,104 +9,97 @@
 class IteratorTest: public ::testing::Test {
 protected:
     virtual void SetUp() {
-        home = new Folder("/Users/user/home");
+        root = new Folder("./src/root");
 
-        profile = new File("/Users/user/home/my_profile");
-        home->add(profile);
+        file0_1 = new File("./src/root/file0_1.txt");
+        root->add(file0_1);
 
-        document = new Folder("/Users/user/home/Documents");
-        home->add(document);
+        folder1_1 = new Folder("./src/root/folder1_1");
+        root->add(folder1_1);
 
-        favorite = new Folder("/Users/user/home/Documents/favorites");
-        document->add(favorite);
-        ddd = new File("/Users/user/home/Documents/favorites/domain-driven-design.pdf");
-        favorite->add(ddd);
-        ca = new File("/Users/user/home/Documents/favorites/clean-architecture.pdf");
-        favorite->add(ca);
-        cqrs = new File("/Users/user/home/Documents/favorites/cqrs.pdf");
-        favorite->add(cqrs);
+        folder1_2 = new Folder("./src/root/folder1_2");
+        root->add(folder1_2);
 
-        note = new File("/Users/user/home/Documents/note.txt");
-        document->add(note);
+        file1_1 = new File("./src/root/folder1_1/file1_1.txt");
+        folder1_1->add(file1_1);
 
-        download = new Folder("/Users/user/home/Downloads");
-        home->add(download);
+        file1_2 = new File("./src/root/folder1_2/file1_2.txt");
+        folder1_2->add(file1_2);
 
-        funny = new File("/Users/user/home/Downloads/funny.png");
-        download->add(funny);
+        folder2_2 = new Folder("./src/root/folder1_2/folder2_2");
+        folder1_2->add(folder2_2);
+        file2_2 = new File("./src/root/folder1_2/folder2_2/file2_2.txt");
+        folder2_2->add(file2_2);
+        file2_3 = new File("./src/root/folder1_2/folder2_2/file2_3.txt");
+        folder2_2->add(file2_3);
     }
 
     void TearDown() {
-        delete home;
-        delete profile;
-        delete download;
-        delete document;
-        delete note;
-        delete favorite;
-        delete ddd;
-        delete ca;
-        delete cqrs;
-        delete funny;
+        delete root;
+        delete file0_1;
+        delete folder1_1;
+        delete folder1_2;
+        delete file1_1;
+        delete file1_2;
+        delete folder2_2;
+        delete file2_2;
+        delete file2_3;
     }
     
-    Node * home;
-    Node * profile;
-    Node * download;
-    Node * document;
-    Node * note;
-    Node * favorite;
-    Node * ddd;
-    Node * ca;
-    Node * cqrs;
-    Node * funny;
+    Node * root;
+    Node * file0_1;
+    Node * folder1_1;
+    Node * folder1_2;
+    Node * file1_1;
+    Node * file1_2;
+    Node * folder2_2;
+    Node * file2_2;
+    Node * file2_3;
 };
 
 TEST_F(IteratorTest, Normal) {
-    Iterator * it = home->createIterator();
+    Iterator * it = root->createIterator();
     it->first();
     ASSERT_FALSE(it->isDone());
     
-    ASSERT_EQ("my_profile", it->currentItem()->name());
+    ASSERT_EQ("file0_1.txt", it->currentItem()->name());
     
     it->next();
-    ASSERT_EQ("Documents", it->currentItem()->name());
+    ASSERT_EQ("folder1_1", it->currentItem()->name());
 
     it->next();
-    ASSERT_EQ("Downloads", it->currentItem()->name());
+    ASSERT_EQ("folder1_2", it->currentItem()->name());
 
     it->next();
     ASSERT_TRUE(it->isDone());
 }
 
 TEST_F(IteratorTest, DFS) {
-    Iterator * dfsIt = new DfsIterator(home);
+    Iterator * dfsIt = new DfsIterator(root);
 
     dfsIt->first();
-    ASSERT_EQ("my_profile", dfsIt->currentItem()->name());
+    ASSERT_EQ("file0_1.txt", dfsIt->currentItem()->name());
 
     dfsIt->next();
-    ASSERT_EQ("Documents", dfsIt->currentItem()->name());
+    ASSERT_EQ("folder1_1", dfsIt->currentItem()->name());
 
     dfsIt->next();
-    ASSERT_EQ("favorites", dfsIt->currentItem()->name());
+    ASSERT_EQ("file1_1.txt", dfsIt->currentItem()->name());
 
     dfsIt->next();
-    ASSERT_EQ("domain-driven-design.pdf", dfsIt->currentItem()->name());
+    ASSERT_EQ("folder1_2", dfsIt->currentItem()->name());
 
     dfsIt->next();
-    ASSERT_EQ("clean-architecture.pdf", dfsIt->currentItem()->name());
+    ASSERT_EQ("file1_2.txt", dfsIt->currentItem()->name());
 
     dfsIt->next();
-    ASSERT_EQ("cqrs.pdf", dfsIt->currentItem()->name());
+    ASSERT_EQ("folder2_2", dfsIt->currentItem()->name());
 
     dfsIt->next();
-    ASSERT_EQ("note.txt", dfsIt->currentItem()->name());
+    ASSERT_EQ("file2_2.txt", dfsIt->currentItem()->name());
 
     dfsIt->next();
-    ASSERT_EQ("Downloads", dfsIt->currentItem()->name());
-
-    dfsIt->next();
-    ASSERT_EQ("funny.png", dfsIt->currentItem()->name());
+    ASSERT_EQ("file2_3.txt", dfsIt->currentItem()->name());
 
     dfsIt->next();
     ASSERT_TRUE(dfsIt->isDone());
@@ -114,35 +107,42 @@ TEST_F(IteratorTest, DFS) {
 
 
 TEST_F(IteratorTest, BFS) {
-    Iterator * bfsIt = new BfsIterator(home);
+    Iterator * bfsIt = new BfsIterator(root);
 
     bfsIt->first();
-    ASSERT_EQ("my_profile", bfsIt->currentItem()->name());
+    ASSERT_EQ("file0_1.txt", bfsIt->currentItem()->name());
 
     bfsIt->next();
-    ASSERT_EQ("Documents", bfsIt->currentItem()->name());
+    ASSERT_EQ("folder1_1", bfsIt->currentItem()->name());
 
     bfsIt->next();
-    ASSERT_EQ("Downloads", bfsIt->currentItem()->name());
+    ASSERT_EQ("folder1_2", bfsIt->currentItem()->name());
 
     bfsIt->next();
-    ASSERT_EQ("favorites", bfsIt->currentItem()->name());
+    ASSERT_EQ("file1_1.txt", bfsIt->currentItem()->name());
 
     bfsIt->next();
-    ASSERT_EQ("note.txt", bfsIt->currentItem()->name());
+    ASSERT_EQ("file1_2.txt", bfsIt->currentItem()->name());
 
     bfsIt->next();
-    ASSERT_EQ("funny.png", bfsIt->currentItem()->name());
+    ASSERT_EQ("folder2_2", bfsIt->currentItem()->name());
 
     bfsIt->next();
-    ASSERT_EQ("domain-driven-design.pdf", bfsIt->currentItem()->name());
+    ASSERT_EQ("file2_2.txt", bfsIt->currentItem()->name());
 
     bfsIt->next();
-    ASSERT_EQ("clean-architecture.pdf", bfsIt->currentItem()->name());
-
-    bfsIt->next();
-    ASSERT_EQ("cqrs.pdf", bfsIt->currentItem()->name());
+    ASSERT_EQ("file2_3.txt", bfsIt->currentItem()->name());
 
     bfsIt->next();
     ASSERT_TRUE(bfsIt->isDone());
+}
+
+TEST_F(IteratorTest, throw_if_structure_changed) {
+    Iterator * it = root->createIterator();
+    it->first();
+    ASSERT_FALSE(it->isDone());
+    Node * file0_2 = new File("./src/root/file0_2.txt");
+    root->add(file0_2);
+    ASSERT_ANY_THROW(it->next());
+    ASSERT_ANY_THROW(it->first());
 }

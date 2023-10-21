@@ -1,0 +1,4 @@
+Hi, I'm file1_2.txt
+Hello world...
+
+Goodbye!

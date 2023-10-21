@@ -6,31 +6,31 @@
 using namespace std;
 
 TEST(Folder, normal) {
-    Folder home("/Users/user/home");
+    Folder root("./src/root");
 
-    ASSERT_EQ("home", home.name());
-    ASSERT_EQ("/Users/user/home", home.path());
+    ASSERT_EQ("root", root.name());
+    ASSERT_EQ("./src/root", root.path());
 }
 
 TEST(Folder, add_file) {
-    Folder home("/Users/user/home");
-    File hello("/Users/user/home/hello.txt");
-    home.add(&hello);
+    Folder root("./src/root");
+    File file0_1("./src/root/file0_1.txt");
+    root.add(&file0_1);
 
-    ASSERT_EQ("hello.txt", home.getChildByName("hello.txt")->name());
+    ASSERT_EQ("file0_1.txt", root.getChildByName("file0_1.txt")->name());
 }
 
 TEST(Folder, add_incorrect_path_file_to_folder) {
-    Folder home("/Users/user/home");
-    File hello("/Users/user/home/Documents/hello.txt");
-    ASSERT_ANY_THROW(home.add(&hello));
+    Folder root("./src/root");
+    File file1_1("./src/root/folder1_1/file1_1.txt");
+    ASSERT_ANY_THROW(root.add(&file1_1));
 }
 
 TEST(Folder, add_folder) {
-    Folder home("/Users/user/home");
-    Folder document("/Users/user/home/Documents");
+    Folder root("./src/root");
+    Folder folder1_1("./src/root/folder1_1");
 
-    home.add(&document);
+    root.add(&folder1_1);
 
-    ASSERT_EQ("Documents", home.getChildByName("Documents")->name());
+    ASSERT_EQ("folder1_1", root.getChildByName("folder1_1")->name());
 }

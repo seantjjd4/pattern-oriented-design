@@ -1,16 +1,57 @@
 #pragma once
 
 #include <list>
+#include <sys/stat.h>
+#include <iostream>
 #include "node.h"
 #include "iterator.h"
 #include "dfs_iterator.h"
+#include "visitor.h"
 
 using namespace std;
 
 class Folder: public Node {
-    friend class FolderIterator;
+
+    class FolderIterator : public Iterator {
+    public:
+        FolderIterator(Folder* composite):_host(composite) {
+        _version = _host->_getVersion();
+    };
+        ~FolderIterator() {}
+        void first() {
+            if (_host->_getVersion() != _version) {
+                throw ("Iterator unavailable! -> --Folder structure changed--");
+            }
+            _current = _host->_nodes.begin();
+        };
+
+        Node * currentItem() const {
+            return *_current;
+        };
+
+        void next() {
+            if (_host->_getVersion() != _version) {
+                throw ("Iterator unavailable! -> --Folder structure changed--");
+            }
+            _current++;
+        };
+        bool isDone() const {
+            return _current == _host->_nodes.end();
+        };
+
+    private:
+        Folder* const _host;
+        int _version;
+        std::list<Node *>::iterator _current;
+    };
+
 private:
     list<Node *> _nodes;
+    int _version = 0;
+
+    int _getVersion() {
+        return _version;
+    }
 
 protected:
     void removeChild(Node * target) {
@@ -18,7 +59,14 @@ protected:
     }
 
 public:
-    Folder(string path): Node(path) {}
+    Folder(string path): Node(path) {
+        struct stat sb;
+        if (lstat(path.c_str(), &sb) != 0) {
+            throw ("No such Folder (wrong path)");
+        } else if (!(sb.st_mode & S_IFDIR)) {
+            throw ("Folder Constuctor: non-folder given");
+        }
+    }
 
     void add(Node * node) {
         if (node->path() != this->path() + "/" + node->name()) {
@@ -26,6 +74,9 @@ public:
         }
         _nodes.push_back(node);
         node->parent(this);
+
+        // version control for iterator throwing exception when sturcture changed
+        _version++;
     }
 
     Node * getChildByName(const char * name) const {
@@ -98,5 +149,11 @@ public:
         if (target) {
             target->parent()->removeChild(target);
         }
+        // version control for iterator throwing exception when sturcture changed
+        _version++;
+    }
+
+    void accept(Visitor * visitor) {
+        visitor->visitFolder(this);
     }
 };
