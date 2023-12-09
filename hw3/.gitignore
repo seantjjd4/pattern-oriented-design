@@ -2,7 +2,6 @@
 
 bin
 obj
-resource
 
 #Mac Os
 .DS_Store
